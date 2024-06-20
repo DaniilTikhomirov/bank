@@ -10,6 +10,10 @@ python = "^3.11"
 flake8 = "^7.1.0"
 black = "^24.4.2"
 mypy = "^1.10.0"
+pandas = "^2.2.2"
+requests = "^2.32.3"
+pandas-stubs = "^2.2.2.240603"
+xlrd = "^2.0.1"
 
 
 [build-system]
