@@ -1,7 +1,6 @@
 import json
 import os.path
-from typing import Any, List, Dict, Hashable
-
+from typing import Any
 import pandas as pd
 import requests
 
@@ -62,6 +61,3 @@ def unpack_excel(path: str) -> list:
     json_excel = formating_excel.to_dict(orient="records")
     logger.info("unpack")
     return json_excel
-
-
-print(unpack_excel("..\\data\\operation.xls"))

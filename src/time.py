@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def find_time_of_day(date: str) -> str:
@@ -12,3 +12,15 @@ def find_time_of_day(date: str) -> str:
     elif 0 <= int(date_object) <= 3:
         return "Доброй ночи"
     return "Добро пожаловать"
+
+
+def range_time():
+    base = datetime.today()
+    b1 = base.strftime('%m')
+    b = 65
+    date_list = []
+    while int(b) != (int(b1) - 1):
+        date_list.append(base.strftime('%m %d'))
+        base = base - timedelta(days=1)
+        b = base.strftime('%m')
+    return date_list
