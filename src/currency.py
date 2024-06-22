@@ -56,15 +56,17 @@ CODE_CURRENCY = {
 }
 
 
-def get_currencies(currency: str) -> Decimal | bool:
+def get_currencies(currency: list) -> list[dict] | bool:
     """
     находит в xml файле цену этой валюты в рублях
     :param currency: валюта
     :return: цена валюты
     """
-    if currency == "RUB":
+    list_currency = []
+    if "RUB" in currency:
         logger.info("currency is RUB")
-        return Decimal("1")
+        list_currency.append({"currency": "RUB", "rate": Decimal("1")})
+    currency = list(map(lambda x: CODE_CURRENCY.get(x, ""), currency))
     # получает актуальную дату
     time_now = datetime.strftime(datetime.now(), "%d/%m/%Y")
     # использую дату как ссылку для xml данных центра банка
@@ -78,32 +80,13 @@ def get_currencies(currency: str) -> Decimal | bool:
     root = three.getroot()
     # проходимся по корню`
     for child in root:
-        if child.attrib["ID"] == CODE_CURRENCY[currency]:
-            element = child.find("Value")
-            if element is not None:
-                value = element.text
-                value_currency = Decimal(str(value).replace(",", "."))
-                logger.info(f"good parse value is {str(value_currency)}")
-                return value_currency
-            else:
-                logger.info("bad parse")
-                return False
-    return Decimal("0")
-
-
-def calculate_amount_in_rub(operation: dict) -> Decimal | str:
-    """
-    считает сумму операции в рублях
-    :param operation: операция
-    :return: сумма операции в рублях
-    """
-    code_currency = operation["operationAmount"]["currency"]["code"]
-    amount = operation["operationAmount"]["amount"]
-    currency = get_currencies(code_currency)
-    logger.info("calculate...")
-    if currency:
-        amount_in_rub = Decimal(amount) * currency
-        logger.info(f"calculate {amount_in_rub}")
-        return amount_in_rub
-    logger.info("error parsing")
-    return "error parsing"
+        if child.attrib["ID"] in currency:
+            for item in child:
+                if item.tag == "Value":
+                    element = item.text
+                if item.tag == "CharCode":
+                    code = item.text
+            value_currency = Decimal(str(element).replace(",", "."))
+            logger.info(f"good parse value is {str(value_currency)}")
+            list_currency.append({"currency": code, "rate": value_currency})
+    return list_currency
