@@ -23,7 +23,7 @@ def info_from_operation(operation: list[dict], date: str) -> list[dict]:
                     name = name[-4:]
                     sum_operation = (info_card.get(name, {}).get('total_spent', 0)) + (
                             Decimal(str(item['Сумма операции'])) * -1)
-                    sum_cashback = int(sum_operation) // 100
+                    sum_cashback = sum_operation / 100
                     info_card[name] = {
                         'total_spent': sum_operation,
                         'cashback': sum_cashback}
