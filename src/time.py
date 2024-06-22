@@ -14,13 +14,23 @@ def find_time_of_day(date: str) -> str:
     return "Добро пожаловать"
 
 
-def range_time():
-    base = datetime.today()
-    b1 = base.strftime('%m')
-    b = 65
+def range_time(date: str, week: int) -> list:
+    base = datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+    b1 = int(base.strftime('%m')) - week
+    b = 13
     date_list = []
-    while int(b) != (int(b1) - 1):
-        date_list.append(base.strftime('%m %d'))
+    while b != b1:
+        date_list.append(base.strftime('%m %d %Y'))
         base = base - timedelta(days=1)
-        b = base.strftime('%m')
+        b = int(base.strftime('%m'))
     return date_list
+
+
+def find_range_time(operation: list[dict], date_list: list) -> list[dict]:
+    new_list = []
+    for item in operation:
+        if item['Дата платежа']:
+            date = datetime.strptime(item['Дата платежа'], '%d.%m.%Y').strftime('%m %d %Y')
+            if date in date_list:
+                new_list.append(item)
+    return new_list
