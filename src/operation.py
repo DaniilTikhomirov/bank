@@ -1,6 +1,7 @@
 from decimal import Decimal
+
 from src.utils import unpack_excel
-from datetime import datetime
+
 from src.time import range_time, find_range_time
 
 
@@ -11,7 +12,8 @@ def info_from_operation(operation: list[dict], date: str) -> list[dict]:
     :param date дата от которой идет отсчет
     :return: список с словорями с информацией о операциях по каждой карте
     """
-    operation = find_range_time(operation, range_time(date, 1))
+    operation = find_range_time(operation, range_time(date))
+    sum_cashback = 0
     info_card: dict = {}
     for item in operation:
         # берем только траты
@@ -22,15 +24,17 @@ def info_from_operation(operation: list[dict], date: str) -> list[dict]:
                 if len(name) >= 4:
                     name = name[-4:]
                     sum_operation = (info_card.get(name, {}).get("total_spent", 0)) + (
-                        Decimal(str(item["Сумма операции"])) * -1
+                            Decimal(str(item["Сумма операции"])) * -1
                     )
-                    sum_cashback = sum_operation / 100
+                    if sum_operation >= 100:
+                        sum_cashback = info_card.get(name, {}).get('cashback', 0) + (
+                                    Decimal(str(item["Сумма операции"])) * -1 / 100)
                     info_card[name] = {"total_spent": sum_operation, "cashback": sum_cashback}
 
                 else:
                     name = "Переводы"
                     sum_operation = (info_card.get(name, {}).get("total_spent", 0)) + (
-                        Decimal(str(item["Сумма операции"])) * -1
+                            Decimal(str(item["Сумма операции"])) * -1
                     )
                     info_card["Переводы"] = {"total_spent": sum_operation, "cashback": 0}
     # формируем список
@@ -53,7 +57,7 @@ def find_top_transactions(operation: list[dict], date: str, top: int = 5) -> lis
     top_list = []
     # берем только траты
     operation = list(filter(lambda x: int(x["Сумма операции"]) < 0, operation))
-    operation = find_range_time(operation, range_time(date, 1))
+    operation = find_range_time(operation, range_time(date))
     # проверка на топ
     if top > len(operation):
         top = len(operation)
@@ -72,15 +76,11 @@ def find_top_transactions(operation: list[dict], date: str, top: int = 5) -> lis
     return top_list
 
 
-data = unpack_excel("..\\data\\operation.xls")
-date1 = str(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+def find_line(operation: list[dict], line: str) -> list[dict]:
+    """находит словари с тем что поддал пользователь"""
+    new_data = []
+    for item in operation:
+        if line.lower() in item['Категория'].lower() or line.lower() in item['Описание'].lower():
+            new_data.append(item)
+    return new_data
 
-print(*info_from_operation(data, date1), sep="\n")
-print()
-print(
-    *find_top_transactions(
-        data,
-        date1,
-    ),
-    sep="\n"
-)

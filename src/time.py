@@ -14,12 +14,12 @@ def find_time_of_day(date: str) -> str:
     return "Добро пожаловать"
 
 
-def range_time(date: str, week: int) -> list:
+def range_time(date: str) -> list:
     base = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-    b1 = int(base.strftime("%m")) - week
-    b = 13
+    b1 = int(base.strftime("%m"))
+    b = int(base.strftime("%m"))
     date_list = []
-    while b != b1:
+    while b == b1:
         date_list.append(base.strftime("%m %d %Y"))
         base = base - timedelta(days=1)
         b = int(base.strftime("%m"))
@@ -34,3 +34,5 @@ def find_range_time(operation: list[dict], date_list: list) -> list[dict]:
             if date in date_list:
                 new_list.append(item)
     return new_list
+
+# print(range_time('2018-01-10 12:12:12'))

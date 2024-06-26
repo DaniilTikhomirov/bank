@@ -6,7 +6,7 @@ import requests
 
 from src.config_log import setting_log
 
-logger = setting_log(__name__)
+logger = setting_log('utils')
 
 
 def unpack_json(path: str) -> Any:
@@ -61,3 +61,4 @@ def unpack_excel(path: str) -> list:
     json_excel = formating_excel.to_dict(orient="records")
     logger.info("unpack")
     return json_excel
+
