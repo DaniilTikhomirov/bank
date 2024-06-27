@@ -6,7 +6,7 @@ from decimal import Decimal
 from src.config_log import setting_log
 from src.utils import write_xml_from_web
 
-logger = setting_log(__name__)
+logger = setting_log('currency')
 
 # словарь код валюты: ID валюты
 CODE_CURRENCY = {

@@ -1,5 +1,7 @@
 import pytest
-from src.operation import find_line, info_from_operation, find_top_transactions
+from pandas import DataFrame
+
+from src.operation import find_line, info_from_operation, find_top_transactions, find_category_df
 from decimal import Decimal
 
 
@@ -102,3 +104,22 @@ def test_find_top_transactions(data: list[dict]) -> None:
                 'date': '04.01.2018',
                 'description': 'OOO Balid'}]
     assert find_top_transactions(data, time) == correct
+
+
+def test_find_category_df(data: list[dict]) -> None:
+    data = DataFrame(data)
+    assert find_category_df(data, 'Переводы').to_dict('records') == [{'MCC': '',
+                                                                      'Бонусы (включая кэшбэк)': 0,
+                                                                      'Валюта операции': 'RUB',
+                                                                      'Валюта платежа': 'RUB',
+                                                                      'Дата операции': '01.01.2018 12:49:53',
+                                                                      'Дата платежа': '01.01.2018',
+                                                                      'Категория': 'Переводы',
+                                                                      'Кэшбэк': '',
+                                                                      'Номер карты': '',
+                                                                      'Округление на инвесткопилку': 0,
+                                                                      'Описание': 'Линзомат ТЦ Юность',
+                                                                      'Статус': 'OK',
+                                                                      'Сумма операции': -3000.0,
+                                                                      'Сумма операции с округлением': 3000.0,
+                                                                      'Сумма платежа': -3000.0}]
