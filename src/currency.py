@@ -3,6 +3,8 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from decimal import Decimal
 
+import requests
+from dotenv import load_dotenv
 from src.config_log import setting_log
 from src.utils import write_xml_from_web
 
@@ -65,7 +67,7 @@ def get_currencies(currency: list) -> list[dict] | bool:
     list_currency = []
     if "RUB" in currency:
         logger.info("currency is RUB")
-        list_currency.append({"currency": "RUB", "rate": Decimal("1")})
+        list_currency.append({"currency": "RUB", "rate": "1"})
     currency = list(map(lambda x: CODE_CURRENCY.get(x, ""), currency))
     # получает актуальную дату
     time_now = datetime.strftime(datetime.now(), "%d/%m/%Y")
@@ -86,7 +88,31 @@ def get_currencies(currency: list) -> list[dict] | bool:
                     element = item.text
                 if item.tag == "CharCode":
                     code = item.text
-            value_currency = Decimal(str(element).replace(",", "."))
+            value_currency = str(Decimal(str(element).replace(",", ".")))
             logger.info(f"good parse value is {str(value_currency)}")
             list_currency.append({"currency": code, "rate": value_currency})
     return list_currency
+
+
+def get_sp500(stocks: list) -> list[dict]:
+    """
+    берет курс акций из S&P500
+    :param stocks: лист акций которые нужны
+    :return: список с словарями с названием и ценой
+    """
+    list_stock = []
+    load_dotenv()
+    API = os.getenv('API')
+    logger.info('get API...')
+    for element in stocks:
+        url = f'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={element}&apikey={API}'
+        logger.info('request...')
+        info = requests.get(url).json()
+        last_ref = info["Meta Data"]["3. Last Refreshed"]
+        close = info["Time Series (Daily)"][last_ref]["4. close"]
+        logger.info('done')
+        list_stock.append({
+            "stock": element,
+            "price": close
+        })
+    return list_stock

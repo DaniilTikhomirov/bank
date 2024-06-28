@@ -1,10 +1,10 @@
 import xml.etree.ElementTree as ET
 from decimal import Decimal
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 import pytest
 
-from src.currency import get_currencies
+from src.currency import get_currencies, get_sp500
 
 
 @pytest.fixture
@@ -42,3 +42,17 @@ def test_get_currencies(data: str) -> None:
             value = get_currencies(["USD", "EUR"])
             assert value == [{'currency': 'USD', 'rate': Decimal('74.3250')},
                              {'currency': 'EUR', 'rate': Decimal('90.1234')}]
+
+
+@patch('requests.get')
+def test_get_sp500(mock_get: Mock) -> None:
+    mock_get.return_value.json.return_value = {
+        "Meta Data": {
+            "3. Last Refreshed": "2024-06-27",
+        },
+        "Time Series (Daily)": {
+            "2024-06-27": {
+                "4. close": "214.1000",
+            }}}
+    assert get_sp500(['AAPL']) == [{'price': '214.1000', 'stock': 'AAPL'}]
+

@@ -52,7 +52,7 @@ def info_from_operation(operation: list[dict], date: str) -> list[dict]:
         list_info = []
         for k, v in info_card.items():
             list_info.append(
-                {"last_digits": k, "total_spent": info_card[k]["total_spent"], "cashback": info_card[k]["cashback"]}
+                {"last_digits": k, "total_spent": str(info_card[k]["total_spent"]), "cashback": str(info_card[k]["cashback"])}
             )
         logger.info(f'create data count cart{len(list_info)}')
         return list_info
