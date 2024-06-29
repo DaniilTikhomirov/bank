@@ -20,6 +20,7 @@ yfinance = "^0.2.40"
 beautifulsoup4 = "^4.12.3"
 lxml = "^5.2.2"
 python-dotenv = "^1.0.1"
+isort = "^5.13.2"
 
 
 [tool.poetry.group.dev.dependencies]

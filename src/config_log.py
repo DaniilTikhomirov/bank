@@ -1,6 +1,6 @@
 import logging
-from typing import Any
 import os.path
+from typing import Any
 
 
 def setting_log(name: Any) -> logging.Logger:

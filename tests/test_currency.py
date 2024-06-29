@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 from decimal import Decimal
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -29,7 +29,7 @@ def data() -> str:
 
 
 def test_get_currencies_rub() -> None:
-    assert get_currencies(["RUB"]) == [{'currency': 'RUB', 'rate': Decimal('1')}]
+    assert get_currencies(["RUB"]) == [{"currency": "RUB", "rate": Decimal("1")}]
 
 
 def test_get_currencies(data: str) -> None:
@@ -40,11 +40,13 @@ def test_get_currencies(data: str) -> None:
             mock_file = mock_open.return_value.__enter__.return_value
             mock_file.read.return_value = data
             value = get_currencies(["USD", "EUR"])
-            assert value == [{'currency': 'USD', 'rate': Decimal('74.3250')},
-                             {'currency': 'EUR', 'rate': Decimal('90.1234')}]
+            assert value == [
+                {"currency": "USD", "rate": Decimal("74.3250")},
+                {"currency": "EUR", "rate": Decimal("90.1234")},
+            ]
 
 
-@patch('requests.get')
+@patch("requests.get")
 def test_get_sp500(mock_get: Mock) -> None:
     mock_get.return_value.json.return_value = {
         "Meta Data": {
@@ -53,6 +55,7 @@ def test_get_sp500(mock_get: Mock) -> None:
         "Time Series (Daily)": {
             "2024-06-27": {
                 "4. close": "214.1000",
-            }}}
-    assert get_sp500(['AAPL']) == [{'price': '214.1000', 'stock': 'AAPL'}]
-
+            }
+        },
+    }
+    assert get_sp500(["AAPL"]) == [{"price": "214.1000", "stock": "AAPL"}]

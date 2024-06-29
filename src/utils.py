@@ -1,10 +1,11 @@
 import os.path
+
 import pandas as pd
 import requests
 
 from src.config_log import setting_log
 
-logger = setting_log('utils')
+logger = setting_log("utils")
 
 
 def write_xml_from_web(url: str, name: str) -> None:
@@ -30,5 +31,5 @@ def unpack_excel(path: str) -> list:
         logger.info("unpack")
         return json_excel
     except Exception as error:
-        logger.error(f'unpack error:{error}')
+        logger.error(f"unpack error:{error}")
         raise error

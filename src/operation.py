@@ -1,14 +1,11 @@
 from decimal import Decimal
-from typing import Optional
 
 import pandas as pd
 
-from src.utils import unpack_excel
-
-from src.time import range_time, find_range_time
 from src.config_log import setting_log
+from src.time import find_range_time, range_time
 
-logger = setting_log('operation')
+logger = setting_log("operation")
 
 
 def info_from_operation(operation: list[dict], date: str) -> list[dict]:
@@ -19,7 +16,7 @@ def info_from_operation(operation: list[dict], date: str) -> list[dict]:
     :return: список с словорями с информацией о операциях по каждой карте
     """
     try:
-        logger.info('find operation...')
+        logger.info("find operation...")
         operation = find_range_time(operation, range_time(date))
         sum_cashback = 0
         info_card: dict = {}
@@ -32,32 +29,37 @@ def info_from_operation(operation: list[dict], date: str) -> list[dict]:
                     if len(name) >= 4:
                         name = name[-4:]
                         sum_operation = (info_card.get(name, {}).get("total_spent", 0)) + (
-                                Decimal(str(item["Сумма операции"])) * -1
+                            Decimal(str(item["Сумма операции"])) * -1
                         )
                         if sum_operation >= 100:
                             logger.info(f'sum operation: {str(item["Сумма операции"] * -1)} > 100 add cashback')
-                            sum_cashback = info_card.get(name, {}).get('cashback', 0) + (
-                                    Decimal(str(item["Сумма операции"])) * -1 / 100)
+                            sum_cashback = info_card.get(name, {}).get("cashback", 0) + (
+                                Decimal(str(item["Сумма операции"])) * -1 / 100
+                            )
                         info_card[name] = {"total_spent": sum_operation, "cashback": sum_cashback}
 
                     else:
-                        logger.info('card don\'t have name maybe it\'s transfer')
+                        logger.info("card don't have name maybe it's transfer")
                         name = "Переводы"
                         sum_operation = (info_card.get(name, {}).get("total_spent", 0)) + (
-                                Decimal(str(item["Сумма операции"])) * -1
+                            Decimal(str(item["Сумма операции"])) * -1
                         )
                         info_card["Переводы"] = {"total_spent": sum_operation, "cashback": 0}
         # формируем список
-        logger.info('formatting list')
+        logger.info("formatting list")
         list_info = []
         for k, v in info_card.items():
             list_info.append(
-                {"last_digits": k, "total_spent": str(info_card[k]["total_spent"]), "cashback": str(info_card[k]["cashback"])}
+                {
+                    "last_digits": k,
+                    "total_spent": str(info_card[k]["total_spent"]),
+                    "cashback": str(info_card[k]["cashback"]),
+                }
             )
-        logger.info(f'create data count cart{len(list_info)}')
+        logger.info(f"create data count cart{len(list_info)}")
         return list_info
     except Exception as error:
-        logger.error(f'operation error: {error}')
+        logger.error(f"operation error: {error}")
         raise error
 
 
@@ -72,12 +74,12 @@ def find_top_transactions(operation: list[dict], date: str, top: int = 5) -> lis
     try:
         top_list = []
         # берем только траты
-        logger.info('getting operation...')
+        logger.info("getting operation...")
         operation = list(filter(lambda x: int(x["Сумма операции"]) < 0, operation))
         operation = find_range_time(operation, range_time(date))
         # проверка на топ
         if top > len(operation):
-            logger.info('user top > length operations')
+            logger.info("user top > length operations")
             top = len(operation)
         # находим топ
         for _ in range(top):
@@ -91,26 +93,26 @@ def find_top_transactions(operation: list[dict], date: str, top: int = 5) -> lis
                         "description": leader["Описание"],
                     }
                 )
-                logger.info('new top find!')
-        logger.info(f'top length: {len(top_list)}')
+                logger.info("new top find!")
+        logger.info(f"top length: {len(top_list)}")
         return top_list
     except Exception as error:
-        logger.error(f'error: {error}')
+        logger.error(f"error: {error}")
         raise error
 
 
 def find_line(operation: list[dict], line: str) -> list[dict]:
     """находит словари с тем что поддал пользователь"""
     try:
-        logger.info('getting operations...')
+        logger.info("getting operations...")
         new_data = []
         for item in operation:
-            if line.lower() in item['Категория'].lower() or line.lower() in item['Описание'].lower():
+            if line.lower() in item["Категория"].lower() or line.lower() in item["Описание"].lower():
                 new_data.append(item)
-        logger.info('find line!')
+        logger.info("find line!")
         return new_data
     except Exception as error:
-        logger.error(f'error: {error}')
+        logger.error(f"error: {error}")
         raise error
 
 
@@ -122,9 +124,9 @@ def find_category_df(df: pd.DataFrame, category: str) -> pd.DataFrame:
     :return: отфильтрованный датафрейм
     """
     try:
-        df = df[df['Категория'].str.lower() == category.lower()]
-        logger.info('find done')
+        df = df[df["Категория"].str.lower() == category.lower()]
+        logger.info("find done")
         return pd.DataFrame(df)
     except Exception as error:
-        logger.error(f'error: {error}')
+        logger.error(f"error: {error}")
         raise error

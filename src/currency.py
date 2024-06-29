@@ -2,13 +2,15 @@ import os.path
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from decimal import Decimal
+from typing import Any
 
 import requests
 from dotenv import load_dotenv
+
 from src.config_log import setting_log
 from src.utils import write_xml_from_web
 
-logger = setting_log('currency')
+logger = setting_log("currency")
 
 # словарь код валюты: ID валюты
 CODE_CURRENCY = {
@@ -58,7 +60,7 @@ CODE_CURRENCY = {
 }
 
 
-def get_currencies(currency: list) -> list[dict] | bool:
+def get_currencies(currency: list) -> list | bool | Any:
     """
     находит в xml файле цену этой валюты в рублях
     :param currency: валюта
@@ -88,9 +90,10 @@ def get_currencies(currency: list) -> list[dict] | bool:
                     element = item.text
                 if item.tag == "CharCode":
                     code = item.text
-            value_currency = str(Decimal(str(element).replace(",", ".")))
-            logger.info(f"good parse value is {str(value_currency)}")
-            list_currency.append({"currency": code, "rate": value_currency})
+            if element is not None and code is not None:
+                value_currency = str(Decimal(str(element).replace(",", ".")))
+                logger.info(f"good parse value is {str(value_currency)}")
+                list_currency.append({"currency": code, "rate": value_currency})
     return list_currency
 
 
@@ -102,17 +105,14 @@ def get_sp500(stocks: list) -> list[dict]:
     """
     list_stock = []
     load_dotenv()
-    API = os.getenv('API')
-    logger.info('get API...')
+    API = os.getenv("API")
+    logger.info("get API...")
     for element in stocks:
-        url = f'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={element}&apikey={API}'
-        logger.info('request...')
+        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={element}&apikey={API}"
+        logger.info("request...")
         info = requests.get(url).json()
         last_ref = info["Meta Data"]["3. Last Refreshed"]
         close = info["Time Series (Daily)"][last_ref]["4. close"]
-        logger.info('done')
-        list_stock.append({
-            "stock": element,
-            "price": close
-        })
+        logger.info("done")
+        list_stock.append({"stock": element, "price": close})
     return list_stock
