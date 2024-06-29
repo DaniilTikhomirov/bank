@@ -1,5 +1,6 @@
 import json
 import os
+from pathlib import Path
 
 from src.config_log import setting_log
 from src.currency import get_currencies, get_sp500
@@ -16,7 +17,7 @@ def major(date: str) -> str:
     :param date: дата
     :return: возврощает json-ответ
     """
-    with open(os.path.join("..", "user_settings.json")) as f:
+    with open(os.path.join('..', "user_settings.json")) as f:
         loger.info("loading_json...")
         info = json.load(f)
     loger.info("get greeting...")
