@@ -1,4 +1,3 @@
-from decimal import Decimal
 from typing import Any
 
 import pytest
@@ -193,7 +192,7 @@ def test_info_from_operation(data: list[dict]) -> None:
     time = "2018-01-10 12:12:12"
     assert info_from_operation(data, time) == [
         {"last_digits": "7197", "total_spent": "3705.46", "cashback": "37.0546"},
-        {"last_digits": "Переводы", "total_spent": "3000.0", "cashback": '0'},
+        {"last_digits": "Переводы", "total_spent": "3000.0", "cashback": "0"},
     ]
 
 

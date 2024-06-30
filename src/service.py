@@ -10,6 +10,7 @@ logger = setting_log("service")
 
 
 def simple_find(line: str) -> Any:
+    """ищет операции с заданной категорией"""
     try:
         logger.info("starting...")
         file = unpack_excel(os.path.join("..", "data", "operation.xls"))

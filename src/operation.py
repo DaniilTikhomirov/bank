@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 import pandas as pd
+
 from src.config_log import setting_log
 from src.time import find_range_time, range_time
 
@@ -28,12 +29,12 @@ def info_from_operation(operation: list[dict], date: str) -> list[dict]:
                     if len(name) >= 4:
                         name = name[-4:]
                         sum_operation = (info_card.get(name, {}).get("total_spent", 0)) + (
-                                Decimal(str(item["Сумма операции"])) * -1
+                            Decimal(str(item["Сумма операции"])) * -1
                         )
                         if sum_operation >= 100:
                             logger.info(f'sum operation: {str(item["Сумма операции"] * -1)} > 100 add cashback')
                             sum_cashback = info_card.get(name, {}).get("cashback", 0) + (
-                                    Decimal(str(item["Сумма операции"])) * -1 / 100
+                                Decimal(str(item["Сумма операции"])) * -1 / 100
                             )
                         info_card[name] = {"total_spent": sum_operation, "cashback": sum_cashback}
 
@@ -41,7 +42,7 @@ def info_from_operation(operation: list[dict], date: str) -> list[dict]:
                         logger.info("card don't have name maybe it's transfer")
                         name = "Переводы"
                         sum_operation = (info_card.get(name, {}).get("total_spent", 0)) + (
-                                Decimal(str(item["Сумма операции"])) * -1
+                            Decimal(str(item["Сумма операции"])) * -1
                         )
                         info_card["Переводы"] = {"total_spent": sum_operation, "cashback": 0}
         # формируем список
