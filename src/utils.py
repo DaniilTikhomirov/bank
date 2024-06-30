@@ -1,4 +1,5 @@
 import os.path
+from pathlib import Path
 
 import pandas as pd
 import requests
@@ -17,7 +18,7 @@ def write_xml_from_web(url: str, name: str) -> None:
     """
     req = requests.get(url)
     logger.info("get request")
-    with open(os.path.join("..", "data", f"{name}.xml"), "wb") as file:
+    with open(os.path.join(Path(__file__).resolve().parents[1], "data", f"{name}.xml"), "wb") as file:
         logger.info("write xml file")
         file.write(req.content)
 

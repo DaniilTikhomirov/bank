@@ -2,6 +2,7 @@ import os.path
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from decimal import Decimal
+from pathlib import Path
 from typing import Any
 
 import requests
@@ -79,7 +80,7 @@ def get_currencies(currency: list) -> list | bool | Any:
     write_xml_from_web(url, "cbr")
     # парсим данные с нашего файла
     logger.info("parse data...")
-    three = ET.parse(os.path.join("..", "data", "cbr.xml"))
+    three = ET.parse(os.path.join(Path(__file__).resolve().parents[1], "data", "cbr.xml"))
     # получаем корневой элемент
     root = three.getroot()
     # проходимся по корню`
@@ -88,7 +89,7 @@ def get_currencies(currency: list) -> list | bool | Any:
             for item in child:
                 if item.tag == "Value":
                     element = item.text
-                if item.tag == "CharCode":
+                elif item.tag == "CharCode":
                     code = item.text
             if element is not None and code is not None:
                 value_currency = str(Decimal(str(element).replace(",", ".")))

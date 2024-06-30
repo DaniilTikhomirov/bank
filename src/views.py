@@ -17,7 +17,7 @@ def major(date: str) -> str:
     :param date: дата
     :return: возврощает json-ответ
     """
-    with open(os.path.join('..', "user_settings.json")) as f:
+    with open(os.path.join(Path(__file__).resolve().parents[1], "user_settings.json")) as f:
         loger.info("loading_json...")
         info = json.load(f)
     loger.info("get greeting...")
@@ -25,7 +25,7 @@ def major(date: str) -> str:
     list_currency = info["user_currencies"]
     list_stocks = info["user_stocks"]
     loger.info("get data...")
-    data = unpack_excel(os.path.join("..", "data", "operation.xls"))
+    data = unpack_excel(os.path.join(Path(__file__).resolve().parents[1], "data", "operation.xls"))
     loger.info("load operation..")
     list_operation = info_from_operation(data, date)
     loger.info("load top...")
