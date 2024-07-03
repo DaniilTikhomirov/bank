@@ -138,7 +138,7 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
 
 Чтобы запустить этот проект, вам нужно будет добавить следующие переменные среды в ваш env-файл
 
-`API_KEY`
+`API`
 
 
 
