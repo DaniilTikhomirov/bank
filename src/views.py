@@ -25,7 +25,7 @@ def major(date: str) -> str:
     list_currency = info["user_currencies"]
     list_stocks = info["user_stocks"]
     loger.info("get data...")
-    data = unpack_excel(os.path.join(Path(__file__).resolve().parents[1], "data", "operation.xls"))
+    data = unpack_excel(os.path.join(Path(__file__).resolve().parents[1], "data", "operations.xls"))
     loger.info("load operation..")
     list_operation = info_from_operation(data, date)
     loger.info("load top...")
