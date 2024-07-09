@@ -2,19 +2,21 @@ import json
 import os
 from pathlib import Path
 
+import pandas as pd
+
 from src.config_log import setting_log
 from src.currency import get_currencies, get_sp500
 from src.operation import find_top_transactions, info_from_operation
 from src.time import find_time_of_day
-from src.utils import unpack_excel
 
 loger = setting_log("views")
 
 
-def major(date: str) -> str:
+def major(date: str, df: pd.DataFrame) -> str:
     """
     возврощает Json-ответ с информацией на главной
     :param date: дата
+    :param df: датафрейм с операциями
     :return: возврощает json-ответ
     """
     with open(os.path.join(Path(__file__).resolve().parents[1], "user_settings.json")) as f:
@@ -25,7 +27,7 @@ def major(date: str) -> str:
     list_currency = info["user_currencies"]
     list_stocks = info["user_stocks"]
     loger.info("get data...")
-    data = unpack_excel(os.path.join(Path(__file__).resolve().parents[1], "data", "operations.xls"))
+    data = df.to_dict(orient="records")
     loger.info("load operation..")
     list_operation = info_from_operation(data, date)
     loger.info("load top...")

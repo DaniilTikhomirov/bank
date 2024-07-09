@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from typing import Optional
 
@@ -10,7 +11,7 @@ from src.time import find_range_time_df, range_time
 logger = setting_log("reports")
 
 
-def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> pd.DataFrame:
+def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> str:
     """
     возвращает траты по заданной категории за последние три месяца от переданной даты
     :param transactions: датафрейм операций
@@ -29,7 +30,7 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
         logger.info("find time range...")
         transactions = find_range_time_df(transactions, list_time)
         logger.info("done")
-        return transactions
+        return json.dumps(transactions.to_json(force_ascii=False, orient="records"), ensure_ascii=False)
     except Exception as error:
         logger.error(f"error:{error}")
         raise error

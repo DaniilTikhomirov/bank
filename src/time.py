@@ -91,7 +91,7 @@ def find_range_time_df(df: pd.DataFrame, date_list: list) -> pd.DataFrame:
     :return: датофрейм в диапозоне дат
     """
     try:
-        df = df[pd.to_datetime(df["Дата операции"], dayfirst=True).dt.strftime("%m %d %Y").isin(date_list)]
+        df = df[pd.to_datetime(df["Дата операции"], dayfirst=False).dt.strftime("%m %d %Y").isin(date_list)]
         return df
     except Exception as error:
         loger.error(f"error:{error}")
