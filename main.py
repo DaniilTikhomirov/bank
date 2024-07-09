@@ -3,9 +3,9 @@ import os.path
 
 import pandas as pd
 
-from src.views import major
-from src.service import simple_find
 from src.reports import spending_by_category
+from src.service import simple_find
+from src.views import major
 
 
 def main() -> None:
